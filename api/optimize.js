@@ -49,7 +49,7 @@ Keep it direct, specific to his situation, and under 250 words. No generic advic
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error?.message || 'Anthropic API error');
+      throw new Error(JSON.stringify(error));
     }
 
     const data = await response.json();
