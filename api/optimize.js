@@ -3,7 +3,12 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { phases, completedCount, totalCount, currentPhase } = req.body;
+  let body = req.body;
+  if (typeof body === 'string') {
+    try { body = JSON.parse(body); } catch(e) {}
+  }
+
+  const { phases, completedCount, totalCount, currentPhase } = body || {};
 
   if (!phases) {
     return res.status(400).json({ error: 'Missing phases data' });
