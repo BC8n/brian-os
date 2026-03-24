@@ -267,7 +267,7 @@ export default function App() {
     const nextItems = getAllItems().filter(i => !completed.has(i.id)).slice(0, 10).map(i => i.text);
     const prompt = "You are a direct career coach. Person: Senior Marketing Manager (9 yrs, adidas Terrex), targeting AI-Enhanced Marketing Ops positioning for $110k+ roles at Nike/Hoka/Adidas and AI-forward companies. Currently unemployed, 4hrs/day Mon-Thu plus flex Fri-Sun.\n\nProgress: " + pct + "% (" + completed.size + "/" + total + " items done)\nRecently completed: " + (doneItems.slice(-6).join(", ") || "none yet") + "\nNext up: " + nextItems.join(", ") + "\n\nGive a 2-3 sentence honest assessment of momentum and ONE specific priority for this week. Be direct. Reference specific items by name.";
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      const res = await fetch("/api/optimize", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
