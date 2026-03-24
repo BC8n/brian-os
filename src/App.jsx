@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-
+import WorkoutTab from "./WorkoutTab";
 const START_DATE = new Date("2026-03-09");
 const WORK_DAYS = [1,2,3,4,5];
 
@@ -392,7 +392,7 @@ export default function App() {
             </div>
             <span style={{ fontSize: 10, color: "#94A3B8" }}>{pct}%</span>
           </div>
-          {["dashboard", "curriculum"].map(v => (
+          {["dashboard", "curriculum", "workout"].map(v => (
             <button
               key={v}
               onClick={() => setView(v)}
@@ -587,6 +587,12 @@ export default function App() {
                 );
               })}
             </div>
+          </div>
+        )}
+        {/* WORKOUT VIEW */}
+        {view === "workout" && (
+          <div style={{ margin: "-18px -16px" }}>
+            <WorkoutTab />
           </div>
         )}
 

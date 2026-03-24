@@ -1,63 +1,59 @@
+// api/optimize.js
+// Vercel serverless function — proxies requests to Anthropic API.
+// The API key lives in Vercel env vars, never exposed to the browser.
+ 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
   }
-
-  let body = req.body;
-  if (typeof body === 'string') {
-    try { body = JSON.parse(body); } catch(e) {}
+ 
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) {
+    console.error("ANTHROPIC_API_KEY is not set");
+    return res.status(500).json({ error: "Server misconfiguration: missing API key" });
   }
-
-  const { phases, completedCount, totalCount, currentPhase } = body || {};
-
-  if (!phases) {
-    return res.status(400).json({ error: 'Missing phases data' });
+ 
+  // Accept either { prompt } or { system, prompt } from the client
+  const { prompt, system } = req.body || {};
+  if (!prompt) {
+    return res.status(400).json({ error: "Missing required field: prompt" });
   }
-
+ 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
+    const body = {
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 1000,
+      messages: [{ role: "user", content: prompt }],
+    };
+ 
+    // Include system prompt if provided
+    if (system) body.system = system;
+ 
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
       },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [
-          {
-            role: 'user',
-            content: `You are a career coaching assistant helping Brian, a senior marketing professional with 9 years at adidas Terrex, transition into AI-Enhanced Marketing Ops roles at Nike, HOKA, or Adidas at $110k+.
-
-Here is his current AI career curriculum progress:
-- Completed: ${completedCount} of ${totalCount} tasks
-- Current phase: ${currentPhase}
-- Phases data: ${JSON.stringify(phases, null, 2)}
-
-Based on his completion rate and current phase, provide:
-1. A brief assessment of his momentum (2-3 sentences)
-2. The 2-3 highest-leverage tasks he should focus on next
-3. One specific tip for accelerating his job search given his marketing background
-4. An honest estimate of readiness for his target roles
-
-Keep it direct, specific to his situation, and under 250 words. No generic advice.`,
-          },
-        ],
-      }),
+      body: JSON.stringify(body),
     });
-
+ 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(JSON.stringify(error));
+      const errData = await response.json().catch(() => ({}));
+      console.error("Anthropic API error:", response.status, errData);
+      return res.status(response.status).json({
+        error: errData?.error?.message || `Anthropic returned ${response.status}`,
+      });
     }
-
+ 
     const data = await response.json();
-    const text = data.content?.[0]?.text || 'No response generated.';
-
-    return res.status(200).json({ result: text });
-  } catch (error) {
-    console.error('Optimize error:', error);
-    return res.status(500).json({ error: error.message || 'Internal server error' });
+    const insight = data.content?.map(c => c.text || "").join("") || "";
+ 
+    return res.status(200).json({ insight });
+  } catch (err) {
+    console.error("Handler exception:", err);
+    return res.status(500).json({ error: "Could not generate insight" });
   }
 }
+ 
