@@ -373,21 +373,20 @@ export default function App() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: C.bg, color: C.text, fontFamily: "'DM Mono', 'Fira Code', Consolas, monospace", fontSize: 13 }}>
+     <div style={{ minHeight: "100vh", background: C.bg, color: C.text, fontFamily: "'DM Mono', 'Fira Code', Consolas, monospace", fontSize: 13, overflowX: "hidden", maxWidth: "100vw" }}>
 
-      {/* NAV */}
       <div style={{
-        borderBottom: "1px solid " + C.border, padding: "12px 18px",
+        borderBottom: "1px solid " + C.border, padding: "12px 14px",
         display: "flex", alignItems: "center", justifyContent: "space-between",
-        background: "#090D15", position: "sticky", top: 0, zIndex: 100
+        background: "#090D15", position: "sticky", top: 0, zIndex: 100,
+        overflowX: "hidden"
       }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div style={{ fontWeight: 800, fontSize: 14, color: "#fff", letterSpacing: "-0.5px" }}>AI CAREER OS</div>
-          <div style={{ fontSize: 9, color: C.muted, letterSpacing: "2px" }}>SR. MARKETING MGR → $110K+</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+          <div style={{ fontWeight: 800, fontSize: 14, color: "#fff", letterSpacing: "-0.5px" }}>BRIAN.OS</div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 7, background: "#111827", border: "1px solid " + C.border, borderRadius: 20, padding: "3px 12px" }}>
-            <div style={{ width: 60, height: 3, background: C.border, borderRadius: 2, overflow: "hidden" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 5, background: "#111827", border: "1px solid " + C.border, borderRadius: 20, padding: "3px 10px" }}>
+            <div style={{ width: 40, height: 3, background: C.border, borderRadius: 2, overflow: "hidden" }}>
               <div style={{ width: pct + "%", height: "100%", background: "linear-gradient(90deg,#0EA5E9,#8B5CF6)", transition: "width 0.5s" }} />
             </div>
             <span style={{ fontSize: 10, color: "#94A3B8" }}>{pct}%</span>
@@ -400,9 +399,9 @@ export default function App() {
                 background: view === v ? C.border : "transparent",
                 border: "1px solid " + (view === v ? "#2D3F57" : C.border),
                 color: view === v ? C.bright : C.muted,
-                borderRadius: 6, padding: "4px 12px", fontSize: 10,
+                borderRadius: 6, padding: "4px 8px", fontSize: 9,
                 cursor: "pointer", fontFamily: "inherit",
-                letterSpacing: "1px", textTransform: "uppercase"
+                letterSpacing: "0.5px", textTransform: "uppercase"
               }}
             >
               {v}
