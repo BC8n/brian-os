@@ -270,15 +270,10 @@ export default function App() {
       const res = await fetch("/api/optimize", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
-          messages: [{ role: "user", content: prompt }]
-        })
+        body: JSON.stringify({ prompt })
       });
       const data = await res.json();
-      const text = data.content && data.content.find(b => b.type === "text");
-      setAiText(text ? text.text : "Could not generate insight.");
+      setAiText(data.insight || "Could not generate insight.");
     } catch(e) {
       setAiText("Connection error — try again.");
     }
