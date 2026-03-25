@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import WorkoutTab from "./WorkoutTab";
+
 const START_DATE = new Date("2026-03-09");
 const WORK_DAYS = [1,2,3,4,5];
 
@@ -292,75 +293,79 @@ export default function App() {
 
   const activePhaseFull = PHASES.find(p => schedule[p.id] && schedule[p.id].pct < 1) || PHASES[PHASES.length - 1];
 
-  const toggleSection = (key) => {
-    setExpanded(prev => ({ ...prev, [key]: prev[key] === false ? true : false }));
-  };
-
+  const toggleSection = (key) => setExpanded(prev => ({ ...prev, [key]: prev[key] === false ? true : false }));
   const isSectionExpanded = (key) => expanded[key] !== false;
 
-  const C = {
-    bg: "#080C14", card: "#0D1117", border: "#1A2535", muted: "#4A5568",
-    text: "#CBD5E0", bright: "#E2E8F0", dim: "#2D3748"
-  };
+  const NAV_ITEMS = [
+    { id: "dashboard", label: "Dashboard", icon: (active) => (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <rect x="3" y="3" width="8" height="8" rx="2" fill={active ? "#1a1a1a" : "none"} stroke={active ? "#1a1a1a" : "#8a8a8e"} strokeWidth="1.5"/>
+        <rect x="13" y="3" width="8" height="8" rx="2" fill={active ? "#1a1a1a" : "none"} stroke={active ? "#1a1a1a" : "#8a8a8e"} strokeWidth="1.5"/>
+        <rect x="3" y="13" width="8" height="8" rx="2" fill={active ? "#1a1a1a" : "none"} stroke={active ? "#1a1a1a" : "#8a8a8e"} strokeWidth="1.5"/>
+        <rect x="13" y="13" width="8" height="8" rx="2" fill={active ? "#1a1a1a" : "none"} stroke={active ? "#1a1a1a" : "#8a8a8e"} strokeWidth="1.5"/>
+      </svg>
+    )},
+    { id: "curriculum", label: "Curriculum", icon: (active) => (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2L2 7l10 5 10-5-10-5z" stroke={active ? "#1a1a1a" : "#8a8a8e"} strokeWidth="1.5" strokeLinejoin="round" fill={active ? "#1a1a1a" : "none"}/>
+        <path d="M2 17l10 5 10-5" stroke={active ? "#1a1a1a" : "#8a8a8e"} strokeWidth="1.5" strokeLinejoin="round"/>
+        <path d="M2 12l10 5 10-5" stroke={active ? "#1a1a1a" : "#8a8a8e"} strokeWidth="1.5" strokeLinejoin="round"/>
+      </svg>
+    )},
+    { id: "workout", label: "Workout", icon: (active) => (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <path d="M6.5 6.5h11M6.5 12h11M6.5 17.5h11" stroke={active ? "#1a1a1a" : "#8a8a8e"} strokeWidth="1.5" strokeLinecap="round"/>
+        <circle cx="3.5" cy="6.5" r="1" fill={active ? "#1a1a1a" : "#8a8a8e"}/>
+        <circle cx="3.5" cy="12" r="1" fill={active ? "#1a1a1a" : "#8a8a8e"}/>
+        <circle cx="3.5" cy="17.5" r="1" fill={active ? "#1a1a1a" : "#8a8a8e"}/>
+      </svg>
+    )},
+  ];
 
   const ItemRow = ({ item, phaseColor }) => {
     const done = completed.has(item.id);
-    const [hover, setHover] = useState(false);
     return (
       <div
         onClick={() => toggle(item.id)}
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
         style={{
-          display: "flex", alignItems: "flex-start", gap: 10,
-          padding: "8px 10px", borderRadius: 7, marginBottom: 2,
-          cursor: "pointer", background: hover ? "rgba(255,255,255,0.04)" : "transparent",
-          transition: "background 0.1s"
+          display: "flex", alignItems: "flex-start", gap: 12,
+          padding: "11px 0", borderBottom: "1px solid #f0f0f0",
+          cursor: "pointer", WebkitTapHighlightColor: "transparent",
         }}
       >
         <div style={{
-          width: 16, height: 16, borderRadius: 4, flexShrink: 0, marginTop: 2,
-          border: "2px solid " + (done ? phaseColor : C.dim),
+          width: 20, height: 20, borderRadius: "50%", flexShrink: 0, marginTop: 1,
+          border: `1.5px solid ${done ? phaseColor : "#d0d0d5"}`,
           background: done ? phaseColor : "transparent",
           display: "flex", alignItems: "center", justifyContent: "center",
-          transition: "all 0.15s"
+          transition: "all 0.15s",
         }}>
-          {done && <span style={{ color: "#000", fontSize: 9, fontWeight: 900, lineHeight: 1 }}>✓</span>}
+          {done && (
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+              <path d="M2 5l2.5 2.5L8 3" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          )}
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{
-            fontSize: 12, lineHeight: 1.5,
-            color: done ? C.muted : C.text,
-            textDecoration: done ? "line-through" : "none"
-          }}>
-            {item.isMilestone && (
-              <span style={{ fontSize: 9, fontWeight: 700, color: "#F59E0B", background: "#F59E0B22", padding: "1px 5px", borderRadius: 3, marginRight: 5 }}>MILESTONE</span>
-            )}
-            {item.isPortfolio && (
-              <span style={{ fontSize: 9, fontWeight: 700, color: "#EC4899", background: "#EC489922", padding: "1px 5px", borderRadius: 3, marginRight: 5 }}>PORTFOLIO</span>
-            )}
-            {!item.isMilestone && item.isBuild && (
-              <span style={{ fontSize: 9, fontWeight: 700, color: "#8B5CF6", background: "#8B5CF622", padding: "1px 5px", borderRadius: 3, marginRight: 5 }}>BUILD</span>
-            )}
-            {item.text}
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 3 }}>
+            {item.isMilestone && <span style={{ fontSize: 9, fontWeight: 600, color: "#b45309", background: "#fef3c7", padding: "1px 6px", borderRadius: 10, letterSpacing: "0.04em" }}>MILESTONE</span>}
+            {item.isPortfolio && <span style={{ fontSize: 9, fontWeight: 600, color: "#9d174d", background: "#fce7f3", padding: "1px 6px", borderRadius: 10, letterSpacing: "0.04em" }}>PORTFOLIO</span>}
+            {!item.isMilestone && item.isBuild && <span style={{ fontSize: 9, fontWeight: 600, color: "#5b21b6", background: "#ede9fe", padding: "1px 6px", borderRadius: 10, letterSpacing: "0.04em" }}>BUILD</span>}
           </div>
+          <div style={{
+            fontSize: 14, lineHeight: 1.45, color: done ? "#b0b0b5" : "#1a1a1a",
+            textDecoration: done ? "line-through" : "none", transition: "color 0.15s",
+          }}>{item.text}</div>
           {item.mins > 0 && (
-            <div style={{ fontSize: 10, color: C.dim, marginTop: 1 }}>
-              {"~" + (item.mins >= 60 ? Math.floor(item.mins / 60) + "h" + (item.mins % 60 ? " " + (item.mins % 60) + "m" : "") : item.mins + "m")}
+            <div style={{ fontSize: 12, color: "#aeaeb2", marginTop: 3 }}>
+              {item.mins >= 60 ? `${Math.floor(item.mins/60)}h${item.mins%60 ? ` ${item.mins%60}m` : ""}` : `${item.mins}m`}
             </div>
           )}
         </div>
         {item.url && (
-          <a
-            href={item.url} target="_blank" rel="noreferrer"
-            onClick={e => e.stopPropagation()}
-            style={{
-              fontSize: 10, color: "#2D3F57", padding: "2px 8px",
-              border: "1px solid " + C.border, borderRadius: 4,
-              whiteSpace: "nowrap", flexShrink: 0, marginTop: 1
-            }}
-          >
-            OPEN →
+          <a href={item.url} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()}
+            style={{ fontSize: 12, color: "#aeaeb2", flexShrink: 0, marginTop: 2, textDecoration: "none", padding: "4px 0" }}>
+            ↗
           </a>
         )}
       </div>
@@ -368,252 +373,195 @@ export default function App() {
   };
 
   return (
-     <div style={{ minHeight: "100vh", background: C.bg, color: C.text, fontFamily: "'DM Mono', 'Fira Code', Consolas, monospace", fontSize: 13, overflowX: "hidden", maxWidth: "100vw" }}>
+    <div style={{
+      minHeight: "100vh",
+      background: "#fafafa",
+      color: "#1a1a1a",
+      fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif",
+      fontSize: 14,
+      overflowX: "hidden",
+      maxWidth: "100vw",
+      paddingBottom: "calc(80px + env(safe-area-inset-bottom, 0px))",
+    }}>
 
+      {/* ── TOP BAR ── */}
       <div style={{
-        borderBottom: "1px solid " + C.border, padding: "12px 14px",
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        background: "#090D15", position: "sticky", top: 0, zIndex: 100,
-        overflowX: "hidden"
+        position: "sticky", top: 0, zIndex: 100,
+        background: "rgba(250,250,250,0.92)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        borderBottom: "1px solid rgba(0,0,0,0.06)",
+        paddingTop: "env(safe-area-inset-top, 0px)",
       }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
-          <div style={{ fontWeight: 800, fontSize: 14, color: "#fff", letterSpacing: "-0.5px" }}>BRIAN.OS</div>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 5, background: "#111827", border: "1px solid " + C.border, borderRadius: 20, padding: "3px 10px" }}>
-            <div style={{ width: 40, height: 3, background: C.border, borderRadius: 2, overflow: "hidden" }}>
-              <div style={{ width: pct + "%", height: "100%", background: "linear-gradient(90deg,#0EA5E9,#8B5CF6)", transition: "width 0.5s" }} />
-            </div>
-            <span style={{ fontSize: 10, color: "#94A3B8" }}>{pct}%</span>
+        <div style={{
+          maxWidth: 680, margin: "0 auto",
+          padding: "14px 20px",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+        }}>
+          <div style={{ fontSize: 17, fontWeight: 600, letterSpacing: "-0.4px", color: "#1a1a1a" }}>
+            Brian.OS
           </div>
-          {["dashboard", "curriculum", "workout"].map(v => (
-            <button
-              key={v}
-              onClick={() => setView(v)}
-              style={{
-                background: view === v ? C.border : "transparent",
-                border: "1px solid " + (view === v ? "#2D3F57" : C.border),
-                color: view === v ? C.bright : C.muted,
-                borderRadius: 6, padding: "4px 8px", fontSize: 9,
-                cursor: "pointer", fontFamily: "inherit",
-                letterSpacing: "0.5px", textTransform: "uppercase"
-              }}
-            >
-              {v}
-            </button>
-          ))}
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ fontSize: 12, color: "#aeaeb2", fontVariantNumeric: "tabular-nums" }}>{pct}%</div>
+            <div style={{ width: 60, height: 3, background: "#e5e5ea", borderRadius: 2, overflow: "hidden" }}>
+              <div style={{ width: `${pct}%`, height: "100%", background: "#1a1a1a", borderRadius: 2, transition: "width 0.5s ease" }}/>
+            </div>
+          </div>
         </div>
+
+        {/* Recalc banner */}
+        {showRecalc && (
+          <div style={{
+            background: "#fff9ed", borderTop: "1px solid #fde68a",
+            padding: "10px 20px", display: "flex", alignItems: "center", justifyContent: "space-between",
+            maxWidth: "100%",
+          }}>
+            <span style={{ fontSize: 13, color: "#92400e" }}>Progress updated</span>
+            <button onClick={recalc} style={{
+              background: "#1a1a1a", color: "#fff", border: "none",
+              borderRadius: 8, padding: "6px 14px", fontSize: 12, fontWeight: 600,
+              cursor: "pointer", fontFamily: "inherit", letterSpacing: "0.01em",
+            }}>Recalculate</button>
+          </div>
+        )}
       </div>
 
-      {/* RECALC BANNER */}
-      {showRecalc && (
-        <div style={{
-          background: "#0A1628", borderBottom: "1px solid #0EA5E9",
-          padding: "8px 18px", display: "flex", alignItems: "center", justifyContent: "space-between"
-        }}>
-          <span style={{ fontSize: 11, color: "#0EA5E9" }}>● Progress updated — recalculate your timeline</span>
-          <button
-            onClick={recalc}
-            style={{
-              background: "#0EA5E9", color: "#000", border: "none",
-              borderRadius: 5, padding: "4px 14px", fontSize: 11, fontWeight: 700,
-              cursor: "pointer", fontFamily: "inherit"
-            }}
-          >
-            RECALCULATE →
-          </button>
-        </div>
-      )}
+      {/* ── CONTENT ── */}
+      <div style={{ maxWidth: 680, margin: "0 auto", padding: "0 20px" }}>
 
-      <div style={{ maxWidth: 1240, margin: "0 auto", padding: "18px 16px" }}>
-
-        {/* DASHBOARD VIEW */}
+        {/* DASHBOARD */}
         {view === "dashboard" && (
-          <div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
+          <div style={{ paddingTop: 24 }}>
 
-              {/* Today's Focus */}
-              <div style={{ background: C.card, border: "1px solid " + C.border, borderRadius: 10, padding: 18 }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
-                  <div>
-                    <div style={{ fontSize: 9, color: C.muted, letterSpacing: "2px", marginBottom: 3 }}>TODAY'S FOCUS</div>
-                    <div style={{ fontWeight: 700, fontSize: 15, color: "#fff" }}>
-                      {todayFocus ? todayFocus.section.title : "All done!"}
+            {/* Hero stat */}
+            <div style={{ marginBottom: 32 }}>
+              <div style={{ fontSize: 13, color: "#aeaeb2", marginBottom: 6, letterSpacing: "0.01em" }}>
+                {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
+              </div>
+              <div style={{ fontSize: 38, fontWeight: 700, letterSpacing: "-1px", color: "#1a1a1a", lineHeight: 1.1 }}>
+                {pct}<span style={{ fontSize: 22, fontWeight: 400, color: "#aeaeb2" }}>%</span>
+              </div>
+              <div style={{ fontSize: 14, color: "#8a8a8e", marginTop: 4 }}>
+                {completed.size} of {total} tasks complete
+              </div>
+              <div style={{ marginTop: 12, height: 3, background: "#e5e5ea", borderRadius: 2, overflow: "hidden" }}>
+                <div style={{ width: `${pct}%`, height: "100%", background: "#1a1a1a", borderRadius: 2, transition: "width 0.6s ease" }}/>
+              </div>
+            </div>
+
+            {/* Today's focus */}
+            {todayFocus && (
+              <div style={{ marginBottom: 24 }}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: "#aeaeb2", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 12 }}>Up next</div>
+                <div style={{ background: "#fff", borderRadius: 16, padding: "4px 16px 0", border: "1px solid #f0f0f0" }}>
+                  <div style={{ padding: "14px 0 12px", borderBottom: "1px solid #f0f0f0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div>
+                      <div style={{ fontSize: 15, fontWeight: 600, color: "#1a1a1a" }}>{todayFocus.section.title}</div>
+                      <div style={{ fontSize: 12, color: "#aeaeb2", marginTop: 2 }}>{todayFocus.phase.title}</div>
                     </div>
-                  </div>
-                  {todayFocus && (
-                    <div style={{ background: "#111827", border: "1px solid " + C.border, borderRadius: 6, padding: "4px 10px", textAlign: "center" }}>
-                      <div style={{ fontSize: 9, color: C.muted }}>PHASE</div>
-                      <div style={{ fontSize: 11, color: todayFocus.phase.color, fontWeight: 600 }}>{todayFocus.phase.title}</div>
-                    </div>
-                  )}
-                </div>
-                {todayFocus ? (
-                  <div>
-                    {todayFocus.items.map(item => (
-                      <ItemRow key={item.id} item={item} phaseColor={todayFocus.phase.color} />
-                    ))}
-                    <button
-                      onClick={() => { setView("curriculum"); setActivePhase(todayFocus.phase.id); }}
-                      style={{
-                        background: "transparent", border: "1px dashed " + C.border,
-                        borderRadius: 7, padding: "6px 12px", color: C.muted,
-                        fontSize: 11, cursor: "pointer", fontFamily: "inherit",
-                        marginTop: 8, width: "100%"
-                      }}
-                    >
-                      View all {todayFocus.phase.title} tasks →
+                    <button onClick={() => { setView("curriculum"); setActivePhase(todayFocus.phase.id); }}
+                      style={{ background: "none", border: "none", color: "#007aff", fontSize: 14, cursor: "pointer", fontFamily: "inherit", padding: "4px 0" }}>
+                      See all
                     </button>
                   </div>
-                ) : (
-                  <div style={{ textAlign: "center", padding: "32px 0", color: C.muted }}>All complete. Ready for interviews.</div>
-                )}
+                  {todayFocus.items.map(item => <ItemRow key={item.id} item={item} phaseColor={todayFocus.phase.color}/>)}
+                </div>
               </div>
+            )}
 
-              {/* Phase Timeline */}
-              <div style={{ background: C.card, border: "1px solid " + C.border, borderRadius: 10, padding: 18 }}>
-                <div style={{ fontSize: 9, color: C.muted, letterSpacing: "2px", marginBottom: 14 }}>PHASE TIMELINE</div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                  {PHASES.map(phase => {
-                    const s = schedule[phase.id];
-                    if (!s) return null;
-                    const done = s.pct >= 1;
-                    const active = !done && activePhaseFull.id === phase.id;
-                    return (
-                      <div
-                        key={phase.id}
-                        onClick={() => { setView("curriculum"); setActivePhase(phase.id); }}
-                        style={{
-                          display: "flex", alignItems: "center", gap: 8,
-                          padding: "7px 10px", borderRadius: 7, cursor: "pointer",
-                          border: "1px solid " + (active ? phase.color + "40" : "#151F2E"),
-                          background: active ? phase.color + "08" : "transparent"
-                        }}
-                      >
-                        <div style={{ width: 6, height: 6, borderRadius: "50%", background: done ? "#22C55E" : active ? phase.color : C.border, flexShrink: 0 }} />
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-                            <span style={{ fontSize: 11, fontWeight: 700, color: done ? C.muted : active ? C.bright : "#6B7280" }}>{phase.title}</span>
-                            <span style={{ fontSize: 10, color: C.muted }}>{phase.subtitle}</span>
-                          </div>
-                          <div style={{ marginTop: 3, height: 2, background: C.border, borderRadius: 1, overflow: "hidden" }}>
-                            <div style={{ width: (s.pct * 100) + "%", height: "100%", background: done ? "#22C55E" : phase.color, transition: "width 0.4s" }} />
-                          </div>
+            {/* Phase timeline */}
+            <div style={{ marginBottom: 24 }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: "#aeaeb2", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 12 }}>Timeline</div>
+              <div style={{ background: "#fff", borderRadius: 16, border: "1px solid #f0f0f0", overflow: "hidden" }}>
+                {PHASES.map((phase, idx) => {
+                  const s = schedule[phase.id];
+                  if (!s) return null;
+                  const done = s.pct >= 1;
+                  const active = !done && activePhaseFull.id === phase.id;
+                  return (
+                    <div key={phase.id}
+                      onClick={() => { setView("curriculum"); setActivePhase(phase.id); }}
+                      style={{
+                        display: "flex", alignItems: "center", gap: 14,
+                        padding: "13px 16px",
+                        borderBottom: idx < PHASES.length - 1 ? "1px solid #f0f0f0" : "none",
+                        cursor: "pointer", background: active ? "#f9f9fb" : "transparent",
+                      }}>
+                      <div style={{
+                        width: 8, height: 8, borderRadius: "50%", flexShrink: 0,
+                        background: done ? "#34c759" : active ? phase.color : "#d1d1d6",
+                      }}/>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 5 }}>
+                          <span style={{ fontSize: 14, fontWeight: active ? 600 : 400, color: done ? "#aeaeb2" : "#1a1a1a" }}>{phase.subtitle}</span>
+                          <span style={{ fontSize: 12, color: done ? "#34c759" : "#aeaeb2", flexShrink: 0 }}>{done ? "Done" : fmt(s.end)}</span>
                         </div>
-                        <div style={{ textAlign: "right", flexShrink: 0 }}>
-                          <div style={{ fontSize: 10, color: done ? "#22C55E" : C.muted }}>{done ? "DONE ✓" : fmt(s.end)}</div>
-                          <div style={{ fontSize: 9, color: C.dim }}>{s.done}/{s.total}</div>
+                        <div style={{ height: 2, background: "#f0f0f0", borderRadius: 1, overflow: "hidden" }}>
+                          <div style={{ width: `${s.pct * 100}%`, height: "100%", background: done ? "#34c759" : phase.color, transition: "width 0.4s" }}/>
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
-                <div style={{ marginTop: 12, padding: "10px 12px", background: "#0A0F18", border: "1px solid " + C.border, borderRadius: 7 }}>
-                  <div style={{ fontSize: 9, color: C.muted, marginBottom: 3 }}>PROJECTED FIRST OFFER</div>
-                  <div style={{ fontSize: 22, fontWeight: 800, color: "#F97316" }}>
-                    {schedule["p7"] ? fmt(schedule["p7"].end) : "TBD"}
-                  </div>
-                  <div style={{ fontSize: 9, color: C.dim, marginTop: 2 }}>Updates when you hit Recalculate</div>
+                    </div>
+                  );
+                })}
+                <div style={{ padding: "14px 16px", borderTop: "1px solid #f0f0f0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontSize: 13, color: "#8a8a8e" }}>Projected first offer</span>
+                  <span style={{ fontSize: 15, fontWeight: 600, color: "#1a1a1a" }}>{schedule["p7"] ? fmt(schedule["p7"].end) : "TBD"}</span>
                 </div>
               </div>
             </div>
 
             {/* AI Optimize */}
-            <div style={{ background: C.card, border: "1px solid " + C.border, borderRadius: 10, padding: 18, marginBottom: 14 }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: aiText ? 12 : 0 }}>
-                <div>
-                  <div style={{ fontSize: 9, color: C.muted, letterSpacing: "2px", marginBottom: 3 }}>AI PLAN OPTIMIZATION</div>
-                  <div style={{ fontSize: 12, color: "#94A3B8" }}>Progress assessment + one specific priority for this week</div>
-                </div>
-                <button
-                  onClick={optimize}
-                  disabled={aiLoading}
-                  style={{
-                    background: aiLoading ? C.border : "linear-gradient(135deg,#0EA5E9,#8B5CF6)",
-                    border: "none", borderRadius: 7, padding: "8px 16px",
-                    color: "#fff", fontSize: 11, fontWeight: 700,
-                    cursor: aiLoading ? "not-allowed" : "pointer",
-                    fontFamily: "inherit", minWidth: 120
-                  }}
-                >
-                  {aiLoading ? "ANALYZING..." : "OPTIMIZE →"}
+            <div style={{ marginBottom: 32 }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: "#aeaeb2", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 12 }}>AI Coach</div>
+              <div style={{ background: "#fff", borderRadius: 16, padding: "16px", border: "1px solid #f0f0f0" }}>
+                {aiText && (
+                  <div style={{ fontSize: 14, color: "#3a3a3c", lineHeight: 1.7, marginBottom: 14, paddingBottom: 14, borderBottom: "1px solid #f0f0f0" }}>
+                    {aiText}
+                  </div>
+                )}
+                <button onClick={optimize} disabled={aiLoading} style={{
+                  width: "100%", padding: "13px", borderRadius: 12,
+                  background: aiLoading ? "#f2f2f7" : "#1a1a1a",
+                  color: aiLoading ? "#aeaeb2" : "#fff",
+                  border: "none", fontSize: 15, fontWeight: 600,
+                  cursor: aiLoading ? "not-allowed" : "pointer",
+                  fontFamily: "inherit", letterSpacing: "-0.2px",
+                  transition: "background 0.2s",
+                }}>
+                  {aiLoading ? "Analyzing…" : "Get this week's priority"}
                 </button>
               </div>
-              {aiText && (
-                <div style={{ padding: 14, background: "#0A0F18", borderRadius: 7, border: "1px solid " + C.border, fontSize: 12, color: C.text, lineHeight: 1.8 }}>
-                  {aiText}
-                </div>
-              )}
             </div>
 
-            {/* Phase Cards */}
-            <div style={{ fontSize: 9, color: C.muted, letterSpacing: "2px", marginBottom: 10 }}>ALL PHASES</div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 10 }}>
-              {PHASES.map(phase => {
-                const s = schedule[phase.id];
-                if (!s) return null;
-                const done = s.pct >= 1;
-                return (
-                  <div
-                    key={phase.id}
-                    onClick={() => { setView("curriculum"); setActivePhase(phase.id); }}
-                    style={{
-                      background: phase.bg, border: "1px solid " + phase.color + "20",
-                      borderRadius: 9, padding: 14, cursor: "pointer",
-                      position: "relative", overflow: "hidden",
-                      transition: "transform 0.15s"
-                    }}
-                    onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; }}
-                    onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; }}
-                  >
-                    <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: done ? "#22C55E" : "linear-gradient(90deg," + phase.color + ",transparent)" }} />
-                    <div style={{ fontSize: 9, color: phase.color, letterSpacing: "1px", marginBottom: 4 }}>{phase.title}</div>
-                    <div style={{ fontWeight: 700, fontSize: 12, color: "#fff", marginBottom: 2 }}>{phase.subtitle}</div>
-                    <div style={{ fontSize: 10, color: C.muted, marginBottom: 10 }}>{phase.detail}</div>
-                    <div style={{ display: "flex", justifyContent: "space-between" }}>
-                      <span style={{ fontSize: 10, color: C.muted }}>{s.done}/{s.total}</span>
-                      <span style={{ fontSize: 10, color: done ? "#22C55E" : phase.color }}>{done ? "DONE ✓" : fmt(s.end)}</span>
-                    </div>
-                    <div style={{ marginTop: 6, height: 2, background: C.border, borderRadius: 1, overflow: "hidden" }}>
-                      <div style={{ width: (s.pct * 100) + "%", height: "100%", background: done ? "#22C55E" : phase.color, transition: "width 0.4s" }} />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-        {/* WORKOUT VIEW */}
-        {view === "workout" && (
-          <div style={{ margin: "-18px -16px" }}>
-            <WorkoutTab />
           </div>
         )}
 
-        {/* CURRICULUM VIEW */}
+        {/* CURRICULUM */}
         {view === "curriculum" && (
-          <div>
-            <div style={{ display: "flex", gap: 7, marginBottom: 16, flexWrap: "wrap" }}>
+          <div style={{ paddingTop: 24 }}>
+            <div style={{ fontSize: 24, fontWeight: 700, letterSpacing: "-0.5px", marginBottom: 20 }}>Curriculum</div>
+
+            {/* Phase filter pills */}
+            <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 8, marginBottom: 20, scrollbarWidth: "none", msOverflowStyle: "none" }}>
+              <button onClick={() => setActivePhase(null)} style={{
+                padding: "7px 14px", borderRadius: 20, fontSize: 13, fontWeight: 500,
+                background: !activePhase ? "#1a1a1a" : "#f2f2f7",
+                color: !activePhase ? "#fff" : "#3a3a3c",
+                border: "none", cursor: "pointer", fontFamily: "inherit", whiteSpace: "nowrap", flexShrink: 0,
+              }}>All</button>
               {PHASES.map(phase => {
                 const s = schedule[phase.id];
                 const act = activePhase === phase.id;
                 return (
-                  <button
-                    key={phase.id}
-                    onClick={() => setActivePhase(act ? null : phase.id)}
-                    style={{
-                      background: act ? phase.color + "20" : C.card,
-                      border: "1px solid " + (act ? phase.color + "60" : C.border),
-                      color: act ? "#fff" : "#6B7280",
-                      borderRadius: 7, padding: "5px 12px", fontSize: 11,
-                      cursor: "pointer", fontFamily: "inherit",
-                      display: "flex", alignItems: "center", gap: 6,
-                      transition: "all 0.15s"
-                    }}
-                  >
-                    <div style={{ width: 6, height: 6, borderRadius: "50%", background: s && s.pct >= 1 ? "#22C55E" : phase.color }} />
-                    <span style={{ fontWeight: 700 }}>{phase.title}</span>
-                    <span style={{ fontSize: 9, color: C.muted }}>{s ? Math.round(s.pct * 100) : 0}%</span>
+                  <button key={phase.id} onClick={() => setActivePhase(act ? null : phase.id)} style={{
+                    padding: "7px 14px", borderRadius: 20, fontSize: 13, fontWeight: 500,
+                    background: act ? "#1a1a1a" : "#f2f2f7",
+                    color: act ? "#fff" : "#3a3a3c",
+                    border: "none", cursor: "pointer", fontFamily: "inherit", whiteSpace: "nowrap", flexShrink: 0,
+                    display: "flex", alignItems: "center", gap: 6,
+                  }}>
+                    <span>{phase.subtitle}</span>
+                    <span style={{ fontSize: 11, color: act ? "rgba(255,255,255,0.6)" : "#aeaeb2" }}>{s ? Math.round(s.pct * 100) : 0}%</span>
                   </button>
                 );
               })}
@@ -622,49 +570,52 @@ export default function App() {
             {PHASES.filter(p => !activePhase || p.id === activePhase).map(phase => {
               const s = schedule[phase.id];
               return (
-                <div key={phase.id} style={{ marginBottom: 22, background: C.card, border: "1px solid " + phase.color + "25", borderRadius: 10, overflow: "hidden" }}>
-                  <div style={{ padding: "15px 18px", background: phase.bg, borderBottom: "1px solid " + phase.color + "25", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <div key={phase.id} style={{ marginBottom: 28 }}>
+                  {/* Phase header */}
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 12 }}>
                     <div>
-                      <div style={{ fontSize: 9, color: phase.color, letterSpacing: "2px", marginBottom: 4 }}>
-                        {phase.title + " · " + (s ? fmt(s.start) + " – " + fmt(s.end) : "")}
-                      </div>
-                      <div style={{ fontWeight: 800, fontSize: 17, color: "#fff" }}>{phase.subtitle}</div>
-                      <div style={{ fontSize: 11, color: C.muted, marginTop: 2 }}>{phase.detail}</div>
+                      <div style={{ fontSize: 11, fontWeight: 600, color: "#aeaeb2", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 3 }}>{phase.title}</div>
+                      <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: "-0.4px", color: "#1a1a1a" }}>{phase.subtitle}</div>
                     </div>
                     <div style={{ textAlign: "right" }}>
-                      <div style={{ fontSize: 22, fontWeight: 800, color: phase.color }}>{s ? Math.round(s.pct * 100) : 0}%</div>
-                      <div style={{ fontSize: 10, color: C.muted }}>{s ? s.done : 0}/{s ? s.total : 0} items</div>
-                      <div style={{ marginTop: 4, padding: "2px 8px", background: phase.color + "15", borderRadius: 4, fontSize: 9, color: phase.color }}>
-                        {"✓ " + phase.milestone}
-                      </div>
+                      <div style={{ fontSize: 22, fontWeight: 700, color: s && s.pct >= 1 ? "#34c759" : phase.color }}>{s ? Math.round(s.pct * 100) : 0}%</div>
+                      <div style={{ fontSize: 12, color: "#aeaeb2" }}>{s ? s.done : 0}/{s ? s.total : 0}</div>
                     </div>
                   </div>
+
+                  {/* Milestone badge */}
+                  <div style={{ fontSize: 12, color: "#8a8a8e", background: "#f2f2f7", borderRadius: 8, padding: "8px 12px", marginBottom: 12 }}>
+                    {phase.milestone}
+                  </div>
+
+                  {/* Sections */}
                   {phase.sections.map(section => {
                     const sc = section.items.filter(i => completed.has(i.id)).length;
-                    const key = phase.id + "_" + section.id;
+                    const key = `${phase.id}_${section.id}`;
                     const isExp = isSectionExpanded(key);
                     return (
-                      <div key={section.id} style={{ borderBottom: "1px solid #0F1923" }}>
-                        <div
-                          onClick={() => toggleSection(key)}
-                          style={{ padding: "10px 18px", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer", userSelect: "none" }}
-                        >
-                          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                            <span style={{ fontSize: 12, fontWeight: 600, color: sc === section.items.length ? "#22C55E" : C.bright }}>{section.title}</span>
-                            <span style={{ fontSize: 9, color: C.muted }}>{sc}/{section.items.length}</span>
+                      <div key={section.id} style={{ background: "#fff", borderRadius: 16, border: "1px solid #f0f0f0", marginBottom: 10, overflow: "hidden" }}>
+                        <div onClick={() => toggleSection(key)} style={{
+                          padding: "14px 16px", display: "flex", alignItems: "center", justifyContent: "space-between",
+                          cursor: "pointer", WebkitTapHighlightColor: "transparent",
+                        }}>
+                          <div>
+                            <div style={{ fontSize: 15, fontWeight: 600, color: sc === section.items.length ? "#34c759" : "#1a1a1a" }}>{section.title}</div>
+                            <div style={{ fontSize: 12, color: "#aeaeb2", marginTop: 2 }}>{sc}/{section.items.length} complete</div>
                           </div>
-                          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                            <div style={{ width: 44, height: 2, background: C.border, borderRadius: 1, overflow: "hidden" }}>
-                              <div style={{ width: ((sc / section.items.length) * 100) + "%", height: "100%", background: phase.color }} />
+                          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                            <div style={{ width: 44, height: 3, background: "#f0f0f0", borderRadius: 2, overflow: "hidden" }}>
+                              <div style={{ width: `${(sc/section.items.length)*100}%`, height: "100%", background: phase.color, transition: "width 0.3s" }}/>
                             </div>
-                            <span style={{ fontSize: 10, color: C.dim }}>{isExp ? "▲" : "▼"}</span>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                              style={{ transform: isExp ? "rotate(180deg)" : "rotate(0)", transition: "transform 0.2s", flexShrink: 0 }}>
+                              <path d="M4 6l4 4 4-4" stroke="#aeaeb2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
                           </div>
                         </div>
                         {isExp && (
-                          <div style={{ padding: "0 18px 12px" }}>
-                            {section.items.map(item => (
-                              <ItemRow key={item.id} item={item} phaseColor={phase.color} />
-                            ))}
+                          <div style={{ padding: "0 16px", borderTop: "1px solid #f0f0f0" }}>
+                            {section.items.map(item => <ItemRow key={item.id} item={item} phaseColor={phase.color}/>)}
                           </div>
                         )}
                       </div>
@@ -675,7 +626,48 @@ export default function App() {
             })}
           </div>
         )}
+
+        {/* WORKOUT */}
+        {view === "workout" && (
+          <div style={{ margin: "0 -20px" }}>
+            <WorkoutTab />
+          </div>
+        )}
+
       </div>
+
+      {/* ── BOTTOM NAV ── */}
+      <div style={{
+        position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 100,
+        background: "rgba(250,250,250,0.92)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        borderTop: "1px solid rgba(0,0,0,0.06)",
+        paddingBottom: "env(safe-area-inset-bottom, 0px)",
+      }}>
+        <div style={{
+          maxWidth: 680, margin: "0 auto",
+          display: "flex", alignItems: "center",
+        }}>
+          {NAV_ITEMS.map(item => {
+            const active = view === item.id;
+            return (
+              <button key={item.id} onClick={() => setView(item.id)} style={{
+                flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
+                padding: "10px 0 10px",
+                background: "none", border: "none", cursor: "pointer",
+                fontFamily: "inherit", WebkitTapHighlightColor: "transparent",
+              }}>
+                {item.icon(active)}
+                <span style={{ fontSize: 10, fontWeight: active ? 600 : 400, color: active ? "#1a1a1a" : "#8a8a8e", letterSpacing: "0.01em" }}>
+                  {item.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
     </div>
   );
 }
