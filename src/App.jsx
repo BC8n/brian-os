@@ -342,15 +342,15 @@ export default function App() {
         }}>
           {done && (
             <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-              <path d="M2 5l2.5 2.5L8 3" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M2 5l2.5 2.5L8 3" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           )}
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 3 }}>
-            {item.isMilestone && <span style={{ fontSize: 9, fontWeight: 600, color: "#b45309", background: "#fef3c7", padding: "1px 6px", borderRadius: 10, letterSpacing: "0.04em" }}>MILESTONE</span>}
-            {item.isPortfolio && <span style={{ fontSize: 9, fontWeight: 600, color: "#9d174d", background: "#fce7f3", padding: "1px 6px", borderRadius: 10, letterSpacing: "0.04em" }}>PORTFOLIO</span>}
-            {!item.isMilestone && item.isBuild && <span style={{ fontSize: 9, fontWeight: 600, color: "#5b21b6", background: "#ede9fe", padding: "1px 6px", borderRadius: 10, letterSpacing: "0.04em" }}>BUILD</span>}
+            {item.isMilestone && <span style={{ fontSize: 9, fontWeight: 500, color: "#8B6E5A", background: "#EDE9E4", padding: "1px 6px", borderRadius: 10, letterSpacing: "0.06em" }}>MILESTONE</span>}
+            {item.isPortfolio && <span style={{ fontSize: 9, fontWeight: 500, color: "#4E6070", background: "#E4E8EC", padding: "1px 6px", borderRadius: 10, letterSpacing: "0.06em" }}>PORTFOLIO</span>}
+            {!item.isMilestone && item.isBuild && <span style={{ fontSize: 9, fontWeight: 500, color: "#5A7054", background: "#E8EDE6", padding: "1px 6px", borderRadius: 10, letterSpacing: "0.06em" }}>BUILD</span>}
           </div>
           <div style={{
             fontSize: 14, lineHeight: 1.45, color: done ? "#b0b0b5" : "#1a1a1a",
@@ -375,9 +375,9 @@ export default function App() {
   return (
     <div style={{
       minHeight: "100vh",
-      background: "#fafafa",
-      color: "#1a1a1a",
-      fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif",
+      background: "#F5F4F0",
+      color: "#1A1A18",
+      fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
       fontSize: 14,
       overflowX: "hidden",
       maxWidth: "100vw",
@@ -387,7 +387,7 @@ export default function App() {
       {/* ── TOP BAR ── */}
       <div style={{
         position: "sticky", top: 0, zIndex: 100,
-        background: "rgba(250,250,250,0.92)",
+        background: "rgba(245,244,240,0.94)",
         backdropFilter: "blur(20px)",
         WebkitBackdropFilter: "blur(20px)",
         borderBottom: "1px solid rgba(0,0,0,0.06)",
@@ -403,7 +403,7 @@ export default function App() {
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <div style={{ fontSize: 12, color: "#aeaeb2", fontVariantNumeric: "tabular-nums" }}>{pct}%</div>
-            <div style={{ width: 60, height: 3, background: "#e5e5ea", borderRadius: 2, overflow: "hidden" }}>
+            <div style={{ width: 60, height: 3, background: "#E2E0DB", borderRadius: 2, overflow: "hidden" }}>
               <div style={{ width: `${pct}%`, height: "100%", background: "#1a1a1a", borderRadius: 2, transition: "width 0.5s ease" }}/>
             </div>
           </div>
@@ -418,7 +418,7 @@ export default function App() {
           }}>
             <span style={{ fontSize: 13, color: "#92400e" }}>Progress updated</span>
             <button onClick={recalc} style={{
-              background: "#1a1a1a", color: "#fff", border: "none",
+              background: "#1a1a1a", color: "#FFFFFF", border: "none",
               borderRadius: 8, padding: "6px 14px", fontSize: 12, fontWeight: 600,
               cursor: "pointer", fontFamily: "inherit", letterSpacing: "0.01em",
             }}>Recalculate</button>
@@ -444,7 +444,7 @@ export default function App() {
               <div style={{ fontSize: 14, color: "#8a8a8e", marginTop: 4 }}>
                 {completed.size} of {total} tasks complete
               </div>
-              <div style={{ marginTop: 12, height: 3, background: "#e5e5ea", borderRadius: 2, overflow: "hidden" }}>
+              <div style={{ marginTop: 12, height: 3, background: "#E2E0DB", borderRadius: 2, overflow: "hidden" }}>
                 <div style={{ width: `${pct}%`, height: "100%", background: "#1a1a1a", borderRadius: 2, transition: "width 0.6s ease" }}/>
               </div>
             </div>
@@ -453,7 +453,7 @@ export default function App() {
             {todayFocus && (
               <div style={{ marginBottom: 24 }}>
                 <div style={{ fontSize: 11, fontWeight: 600, color: "#aeaeb2", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 12 }}>Up next</div>
-                <div style={{ background: "#fff", borderRadius: 16, padding: "4px 16px 0", border: "1px solid #f0f0f0" }}>
+                <div style={{ background: "#FFFFFF", borderRadius: 16, padding: "4px 16px 0", border: "1px solid #f0f0f0" }}>
                   <div style={{ padding: "14px 0 12px", borderBottom: "1px solid #f0f0f0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>
                       <div style={{ fontSize: 15, fontWeight: 600, color: "#1a1a1a" }}>{todayFocus.section.title}</div>
@@ -472,7 +472,7 @@ export default function App() {
             {/* Phase timeline */}
             <div style={{ marginBottom: 24 }}>
               <div style={{ fontSize: 11, fontWeight: 600, color: "#aeaeb2", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 12 }}>Timeline</div>
-              <div style={{ background: "#fff", borderRadius: 16, border: "1px solid #f0f0f0", overflow: "hidden" }}>
+              <div style={{ background: "#FFFFFF", borderRadius: 16, border: "1px solid #f0f0f0", overflow: "hidden" }}>
                 {PHASES.map((phase, idx) => {
                   const s = schedule[phase.id];
                   if (!s) return null;
@@ -485,7 +485,7 @@ export default function App() {
                         display: "flex", alignItems: "center", gap: 14,
                         padding: "13px 16px",
                         borderBottom: idx < PHASES.length - 1 ? "1px solid #f0f0f0" : "none",
-                        cursor: "pointer", background: active ? "#f9f9fb" : "transparent",
+                        cursor: "pointer", background: active ? "#F0EFEB" : "transparent",
                       }}>
                       <div style={{
                         width: 8, height: 8, borderRadius: "50%", flexShrink: 0,
@@ -496,7 +496,7 @@ export default function App() {
                           <span style={{ fontSize: 14, fontWeight: active ? 600 : 400, color: done ? "#aeaeb2" : "#1a1a1a" }}>{phase.subtitle}</span>
                           <span style={{ fontSize: 12, color: done ? "#34c759" : "#aeaeb2", flexShrink: 0 }}>{done ? "Done" : fmt(s.end)}</span>
                         </div>
-                        <div style={{ height: 2, background: "#f0f0f0", borderRadius: 1, overflow: "hidden" }}>
+                        <div style={{ height: 2, background: "#E8E6E1", borderRadius: 1, overflow: "hidden" }}>
                           <div style={{ width: `${s.pct * 100}%`, height: "100%", background: done ? "#34c759" : phase.color, transition: "width 0.4s" }}/>
                         </div>
                       </div>
@@ -513,7 +513,7 @@ export default function App() {
             {/* AI Optimize */}
             <div style={{ marginBottom: 32 }}>
               <div style={{ fontSize: 11, fontWeight: 600, color: "#aeaeb2", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 12 }}>AI Coach</div>
-              <div style={{ background: "#fff", borderRadius: 16, padding: "16px", border: "1px solid #f0f0f0" }}>
+              <div style={{ background: "#FFFFFF", borderRadius: 16, padding: "16px", border: "1px solid #f0f0f0" }}>
                 {aiText && (
                   <div style={{ fontSize: 14, color: "#3a3a3c", lineHeight: 1.7, marginBottom: 14, paddingBottom: 14, borderBottom: "1px solid #f0f0f0" }}>
                     {aiText}
@@ -521,8 +521,8 @@ export default function App() {
                 )}
                 <button onClick={optimize} disabled={aiLoading} style={{
                   width: "100%", padding: "13px", borderRadius: 12,
-                  background: aiLoading ? "#f2f2f7" : "#1a1a1a",
-                  color: aiLoading ? "#aeaeb2" : "#fff",
+                  background: aiLoading ? "#EDECEA" : "#1A1A18",
+                  color: aiLoading ? "#B0ADA6" : "#F5F4F0",
                   border: "none", fontSize: 15, fontWeight: 600,
                   cursor: aiLoading ? "not-allowed" : "pointer",
                   fontFamily: "inherit", letterSpacing: "-0.2px",
@@ -545,8 +545,8 @@ export default function App() {
             <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 8, marginBottom: 20, scrollbarWidth: "none", msOverflowStyle: "none" }}>
               <button onClick={() => setActivePhase(null)} style={{
                 padding: "7px 14px", borderRadius: 20, fontSize: 13, fontWeight: 500,
-                background: !activePhase ? "#1a1a1a" : "#f2f2f7",
-                color: !activePhase ? "#fff" : "#3a3a3c",
+                background: !activePhase ? "#1a1a1a" : "#EDECEA",
+                color: !activePhase ? "#FFFFFF" : "#3a3a3c",
                 border: "none", cursor: "pointer", fontFamily: "inherit", whiteSpace: "nowrap", flexShrink: 0,
               }}>All</button>
               {PHASES.map(phase => {
@@ -555,8 +555,8 @@ export default function App() {
                 return (
                   <button key={phase.id} onClick={() => setActivePhase(act ? null : phase.id)} style={{
                     padding: "7px 14px", borderRadius: 20, fontSize: 13, fontWeight: 500,
-                    background: act ? "#1a1a1a" : "#f2f2f7",
-                    color: act ? "#fff" : "#3a3a3c",
+                    background: act ? "#1a1a1a" : "#EDECEA",
+                    color: act ? "#FFFFFF" : "#3a3a3c",
                     border: "none", cursor: "pointer", fontFamily: "inherit", whiteSpace: "nowrap", flexShrink: 0,
                     display: "flex", alignItems: "center", gap: 6,
                   }}>
@@ -584,7 +584,7 @@ export default function App() {
                   </div>
 
                   {/* Milestone badge */}
-                  <div style={{ fontSize: 12, color: "#8a8a8e", background: "#f2f2f7", borderRadius: 8, padding: "8px 12px", marginBottom: 12 }}>
+                  <div style={{ fontSize: 12, color: "#8a8a8e", background: "#EDECEA", borderRadius: 8, padding: "8px 12px", marginBottom: 12 }}>
                     {phase.milestone}
                   </div>
 
@@ -594,7 +594,7 @@ export default function App() {
                     const key = `${phase.id}_${section.id}`;
                     const isExp = isSectionExpanded(key);
                     return (
-                      <div key={section.id} style={{ background: "#fff", borderRadius: 16, border: "1px solid #f0f0f0", marginBottom: 10, overflow: "hidden" }}>
+                      <div key={section.id} style={{ background: "#FFFFFF", borderRadius: 16, border: "1px solid #f0f0f0", marginBottom: 10, overflow: "hidden" }}>
                         <div onClick={() => toggleSection(key)} style={{
                           padding: "14px 16px", display: "flex", alignItems: "center", justifyContent: "space-between",
                           cursor: "pointer", WebkitTapHighlightColor: "transparent",
@@ -604,7 +604,7 @@ export default function App() {
                             <div style={{ fontSize: 12, color: "#aeaeb2", marginTop: 2 }}>{sc}/{section.items.length} complete</div>
                           </div>
                           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                            <div style={{ width: 44, height: 3, background: "#f0f0f0", borderRadius: 2, overflow: "hidden" }}>
+                            <div style={{ width: 44, height: 3, background: "#E8E6E1", borderRadius: 2, overflow: "hidden" }}>
                               <div style={{ width: `${(sc/section.items.length)*100}%`, height: "100%", background: phase.color, transition: "width 0.3s" }}/>
                             </div>
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
@@ -639,7 +639,7 @@ export default function App() {
       {/* ── BOTTOM NAV ── */}
       <div style={{
         position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 100,
-        background: "rgba(250,250,250,0.92)",
+        background: "rgba(245,244,240,0.94)",
         backdropFilter: "blur(20px)",
         WebkitBackdropFilter: "blur(20px)",
         borderTop: "1px solid rgba(0,0,0,0.06)",
