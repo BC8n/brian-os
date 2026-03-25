@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // ─── FEEL OPTIONS ──────────────────────────────────────────────────────────────
 const FEELS = [
@@ -163,11 +163,15 @@ Please optimize next week's ${day.theme} session based on this feedback.`;
 
 // ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
 export default function WorkoutTab() {
-  const [activeDay, setActiveDay]     = useState("A");
+const [activeDay, setActiveDay]     = useState("A");
   const [tab, setTab]                 = useState("workout");
   const [historyTab, setHistoryTab]   = useState("current");
-  const [exData, setExData]           = useState({});
-  const [history, setHistory]         = useState({});
+  const [exData, setExData]           = useState(() => {
+    try { return JSON.parse(localStorage.getItem("workout_exdata") || "{}"); } catch { return {}; }
+  });
+  const [history, setHistory]         = useState(() => {
+    try { return JSON.parse(localStorage.getItem("workout_history") || "{}"); } catch { return {}; }
+  });
   const [aiState, setAiState]         = useState({});
   const [showApprove, setShowApprove] = useState(null);
 
@@ -262,6 +266,13 @@ export default function WorkoutTab() {
     setShowApprove(null);
     setAiState(prev => ({ ...prev, [activeDay]: { status: "idle" } }));
   }
+useEffect(() => {
+    try { localStorage.setItem("workout_history", JSON.stringify(history)); } catch {}
+  }, [history]);
+
+  useEffect(() => {
+    try { localStorage.setItem("workout_exdata", JSON.stringify(exData)); } catch {}
+  }, [exData]);
 
   const exercises    = historyTab === "previous" && previousPlan ? previousPlan.exercises : currentPlan.exercises;
   const displayPlan  = historyTab === "previous" && previousPlan ? previousPlan : currentPlan;
